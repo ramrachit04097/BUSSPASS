@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import { spawn, execSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -104,6 +105,82 @@ async function startServer() {
   const TICKETS_DIR = path.join(ROOT_DIR, 'data', 'tickets');
 
   app.use('/api/tickets', express.json({ limit: '5mb' }));
+
+  app.get('/api/tickets/verify', async (req, res) => {
+    const appIdNum = Number(String(req.query.appId || '0').replace(/\D/g, ''));
+    const studentId = String(req.query.studentId || '').trim().toUpperCase();
+
+    let supabaseUrl = (process.env.VITE_SUPABASE_URL || '').trim();
+    const supabaseAnonKey = (process.env.VITE_SUPABASE_ANON_KEY || '').trim();
+    if (supabaseUrl.includes('supabase.com/dashboard/project/')) {
+      const ref = supabaseUrl.split('/project/')[1]?.split('/')[0]?.trim();
+      if (ref) supabaseUrl = `https://${ref}.supabase.co`;
+    }
+
+    let record: Record<string, unknown> | null = null;
+
+    if (supabaseUrl && supabaseAnonKey && (appIdNum > 0 || studentId)) {
+      try {
+        const filter =
+          appIdNum > 0
+            ? `application_id=eq.${appIdNum}`
+            : `student_id=ilike.${encodeURIComponent(studentId)}`;
+        const sbRes = await fetch(
+          `${supabaseUrl}/rest/v1/bus_passes?select=*&${filter}&limit=1`,
+          {
+            headers: {
+              apikey: supabaseAnonKey,
+              Authorization: `Bearer ${supabaseAnonKey}`,
+            },
+          }
+        );
+        if (sbRes.ok) {
+          const rows = (await sbRes.json()) as Array<Record<string, unknown>>;
+          if (rows && rows.length > 0) {
+            const d = rows[0];
+            record = {
+              applicationID: d.application_id,
+              studentID: d.student_id || '',
+              name: d.name || '',
+              department: d.department || '',
+              contact: d.contact || '',
+              email: d.email || '',
+              route: d.route || '',
+              boardingPoint: d.boarding_point || '',
+              passType: d.pass_type || '',
+              validity: d.validity || '',
+              status: d.status || 'Pending',
+              ticketPhoto: d.ticket_photo || undefined,
+            };
+          }
+        }
+      } catch {
+        // Fallback to local saved ticket store below
+      }
+    }
+
+    const cleanId = appIdNum > 0 ? String(appIdNum) : '';
+    if (cleanId) {
+      const filePath = path.join(TICKETS_DIR, `pass-${cleanId}.json`);
+      if (fs.existsSync(filePath)) {
+        try {
+          const parsed = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+          if (record && !record.ticketPhoto && parsed?.ticketPhoto) {
+            record.ticketPhoto = parsed.ticketPhoto;
+          }
+        } catch {
+          // Ignore corrupted cache file
+        }
+      }
+    }
+
+    if (!record) {
+      res.status(404).json({ success: false, error: 'Pass not found' });
+      return;
+    }
+
+    res.json({ success: true, pass: record });
+  });
 
   app.post('/api/tickets/:appId', (req, res) => {
     const cleanId = String(req.params.appId || '').replace(/\D/g, '');

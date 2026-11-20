@@ -34,8 +34,13 @@ export function DigitalTicketPage({ initialPass, onBackPortal }: DigitalTicketPa
           }
         }
       })
-      .catch(() => {
-        // Keep initialPass from QR URL if offline
+      .catch(async () => {
+        if (active && initialPass.status === 'Approved' && !ticketPhoto) {
+          const generated = await generateDigitalTicketImage(initialPass);
+          if (active && generated) {
+            setTicketPhoto(generated);
+          }
+        }
       })
       .finally(() => {
         if (active) setVerifying(false);
@@ -126,26 +131,34 @@ export function DigitalTicketPage({ initialPass, onBackPortal }: DigitalTicketPa
           </div>
         </div>
 
-        {/* Saved Digital Ticket Photo Image */}
-        {ticketPhoto && (
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-            <div className="flex items-center justify-between mb-3">
-              <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
-                Official Digital Ticket Image
-              </p>
-              <span className="text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md px-2 py-0.5 font-semibold">
-                {pass.status}
-              </span>
-            </div>
-            <img
-              src={ticketPhoto}
-              alt={`SRM AP Digital Bus Pass Ticket #${pass.applicationID}`}
-              className="w-full h-auto rounded-xl border border-slate-100"
-            />
+        {verifying && !pass.route ? (
+          <div className="h-64 rounded-2xl border border-slate-200 bg-white animate-pulse p-6 flex items-center justify-center text-sm text-slate-500">
+            Verifying digital bus pass from database...
           </div>
-        )}
+        ) : (
+          <>
+            {/* Saved Digital Ticket Photo Image */}
+            {ticketPhoto && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    Official Digital Ticket Image
+                  </p>
+                  <span className="text-[11px] font-mono text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md px-2 py-0.5 font-semibold">
+                    {pass.status}
+                  </span>
+                </div>
+                <img
+                  src={ticketPhoto}
+                  alt={`SRM AP Digital Bus Pass Ticket #${pass.applicationID}`}
+                  className="w-full h-auto rounded-xl border border-slate-100"
+                />
+              </div>
+            )}
 
-        <DigitalBusPassCard pass={pass} />
+            <DigitalBusPassCard pass={pass} />
+          </>
+        )}
       </main>
     </div>
   );

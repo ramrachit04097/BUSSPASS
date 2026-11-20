@@ -432,28 +432,48 @@ export const cgiApi = {
     let record: BusPassRecord | null = null;
 
     if (client) {
-      let query = client.from('bus_passes').select('*');
-      if (applicationID > 0) {
-        query = query.eq('application_id', applicationID);
-      } else if (sId) {
-        query = query.ilike('student_id', sId);
+      try {
+        let query = client.from('bus_passes').select('*');
+        if (applicationID > 0) {
+          query = query.eq('application_id', applicationID);
+        } else if (sId) {
+          query = query.ilike('student_id', sId);
+        }
+        const { data, error } = await query.maybeSingle();
+        if (!error && data) {
+          record = {
+            applicationID: data.application_id,
+            studentID: data.student_id || '',
+            name: data.name || '',
+            department: data.department || '',
+            contact: data.contact || '',
+            email: data.email || '',
+            route: data.route || '',
+            boardingPoint: data.boarding_point || '',
+            passType: data.pass_type || '',
+            validity: data.validity || '',
+            status: data.status || 'Pending',
+            ticketPhoto: data.ticket_photo || undefined,
+          };
+        }
+      } catch {
+        // Fall through to server-side /api/tickets/verify
       }
-      const { data, error } = await query.maybeSingle();
-      if (!error && data) {
-        record = {
-          applicationID: data.application_id,
-          studentID: data.student_id || '',
-          name: data.name || '',
-          department: data.department || '',
-          contact: data.contact || '',
-          email: data.email || '',
-          route: data.route || '',
-          boardingPoint: data.boarding_point || '',
-          passType: data.pass_type || '',
-          validity: data.validity || '',
-          status: data.status || 'Pending',
-          ticketPhoto: data.ticket_photo || undefined,
-        };
+    }
+
+    if (!record) {
+      try {
+        const res = await fetch(
+          `/api/tickets/verify?appId=${applicationID}&studentId=${encodeURIComponent(sId)}`
+        );
+        if (res.ok) {
+          const json = await res.json();
+          if (json?.pass) {
+            record = json.pass as BusPassRecord;
+          }
+        }
+      } catch {
+        // Fall through to local cache
       }
     }
 

@@ -1,15 +1,20 @@
 import QRCode from 'qrcode';
 import type { BusPassRecord } from '../types';
 
-export function buildTicketUrl(
-  pass: Pick<BusPassRecord, 'applicationID' | 'studentID'>
-): string {
+export function buildTicketUrl(pass: BusPassRecord): string {
   const origin =
     typeof window !== 'undefined' ? window.location.origin : '';
   const params = new URLSearchParams({
     view: 'ticket',
     appId: String(pass.applicationID),
     studentId: pass.studentID,
+    name: pass.name,
+    dept: pass.department,
+    route: pass.route,
+    stop: pass.boardingPoint,
+    type: pass.passType,
+    valid: pass.validity,
+    status: pass.status,
   });
   return `${origin}/?${params.toString()}`;
 }

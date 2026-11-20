@@ -9,8 +9,17 @@ const STORAGE_KEY_URL = 'buspass_supabase_url';
 const STORAGE_KEY_KEY = 'buspass_supabase_key';
 
 export function getStoredSupabaseConfig(): SupabaseConfig {
-  let supabaseUrl = localStorage.getItem(STORAGE_KEY_URL) || import.meta.env.VITE_SUPABASE_URL || '';
-  const supabaseAnonKey = localStorage.getItem(STORAGE_KEY_KEY) || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+  let storedUrl = '';
+  let storedKey = '';
+  try {
+    storedUrl = localStorage.getItem(STORAGE_KEY_URL) || '';
+    storedKey = localStorage.getItem(STORAGE_KEY_KEY) || '';
+  } catch {
+    // Ignore storage access errors in restricted mobile/iframe contexts
+  }
+
+  let supabaseUrl = storedUrl || import.meta.env.VITE_SUPABASE_URL || '';
+  const supabaseAnonKey = storedKey || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
   // Automatically normalize dashboard URL (e.g. https://supabase.com/dashboard/project/aqvumppbhzwxifxeqotl)
   // into correct Supabase API URL (https://aqvumppbhzwxifxeqotl.supabase.co)
@@ -38,13 +47,21 @@ export function saveSupabaseConfig(config: SupabaseConfig): void {
       }
     }
   }
-  localStorage.setItem(STORAGE_KEY_URL, url);
-  localStorage.setItem(STORAGE_KEY_KEY, config.supabaseAnonKey.trim());
+  try {
+    localStorage.setItem(STORAGE_KEY_URL, url);
+    localStorage.setItem(STORAGE_KEY_KEY, config.supabaseAnonKey.trim());
+  } catch {
+    // Ignore storage access errors
+  }
 }
 
 export function clearSupabaseConfig(): void {
-  localStorage.removeItem(STORAGE_KEY_URL);
-  localStorage.removeItem(STORAGE_KEY_KEY);
+  try {
+    localStorage.removeItem(STORAGE_KEY_URL);
+    localStorage.removeItem(STORAGE_KEY_KEY);
+  } catch {
+    // Ignore storage access errors
+  }
 }
 
 export function getSupabaseClient(): SupabaseClient | null {
