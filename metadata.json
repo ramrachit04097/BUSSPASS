@@ -1,0 +1,6 @@
+{
+  "name": "BUSPASS - Bus Pass Registration & Management System",
+  "description": "University transport and bus pass registration, management, and digital pass issuance portal powered by a C CGI backend and text-file storage.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

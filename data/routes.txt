@@ -1,0 +1,5 @@
+R-101|North Gate Terminal|Academic Quad|Main Library, Engineering Block, Science Center|Available
+R-102|City Railway Station|University Campus|Central Market, Civil Lines, East Gate|Available
+R-103|Westwood Hostel Complex|Central Auditorium|Sports Complex, Medical Center, Arts Faculty|Available
+R-104|South Metro Junction|Research Park|Tech Hub, Faculty Quarters, Admin Block|Limited
+R-105|Old Town Bus Stand|North Campus|Riverfront Park, Polytechnic Gate, Library Square|Full
