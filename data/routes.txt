@@ -1,5 +1,8 @@
-R-101|North Gate Terminal|Academic Quad|Main Library, Engineering Block, Science Center|Available
-R-102|City Railway Station|University Campus|Central Market, Civil Lines, East Gate|Available
-R-103|Westwood Hostel Complex|Central Auditorium|Sports Complex, Medical Center, Arts Faculty|Available
-R-104|South Metro Junction|Research Park|Tech Hub, Faculty Quarters, Admin Block|Limited
-R-105|Old Town Bus Stand|North Campus|Riverfront Park, Polytechnic Gate, Library Square|Full
+R-101|SRM University AP Main Gate|Mangalagiri Bus Station|Neerukonda Village, University Main Gate, Amaravati Road|Available
+R-102|SRM University AP Main Gate|Vijayawada Railway Station|Tadepalli, Undavalli, Prakasam Barrage, Vijayawada Bus Station|Available
+R-103|SRM University AP Main Gate|Guntur Bus Station|Mangalagiri, Namburu, Acharya Nagarjuna University, Guntur Medical College|Available
+R-104|SRM University AP Main Gate|Tenali Railway Station|Mangalagiri, Pedavadlapudi, Duggirala, Tenali Bus Station|Limited
+R-105|SRM University AP Main Gate|Vijayawada Benz Circle|Tadepalli, Undavalli, Prakasam Barrage, Governorpet, Benz Circle|Available
+R-106|SRM University AP Main Gate|Amaravati Secretariat|Neerukonda, Kuragallu, Amaravati Secretariat|Available
+R-107|SRM University AP Main Gate|Tadepalli Bus Station|Neerukonda, Mangalagiri, Undavalli, Tadepalli|Available
+R-108|SRM University AP Main Gate|Guntur Railway Station|Mangalagiri, Namburu, Gorantla, Guntur Railway Station|Limited
