@@ -89,22 +89,27 @@ export async function generateDigitalTicketImage(
   ctx.fillStyle = '#111C35';
   ctx.fillRect(0, 90, width, 28);
 
-  // Orange Logo Badge
-  ctx.fillStyle = '#EB6B2C';
+  // App Logo Badge (exact original white/navy/orange design)
+  ctx.fillStyle = '#FFFFFF';
   drawRoundedRect(ctx, 36, 28, 60, 60, 14);
   ctx.fill();
-
-  // Bus glyph inside orange badge
-  ctx.fillStyle = '#FFFFFF';
-  drawRoundedRect(ctx, 49, 41, 34, 26, 6);
-  ctx.fill();
-  ctx.fillStyle = '#EB6B2C';
-  ctx.fillRect(54, 46, 24, 10);
-  ctx.fillStyle = '#FFFFFF';
-  ctx.beginPath();
-  ctx.arc(57, 72, 3.5, 0, Math.PI * 2);
-  ctx.arc(75, 72, 3.5, 0, Math.PI * 2);
-  ctx.fill();
+  try {
+    const logoImg = await loadImage(
+      '/assets/aistudio/Gemini_Generated_Image_ujd0k6ujd0k6ujd0_e4a283ea.png'
+    );
+    ctx.save();
+    drawRoundedRect(ctx, 36, 28, 60, 60, 14);
+    ctx.clip();
+    ctx.drawImage(logoImg, 32, 24, 68, 68);
+    ctx.restore();
+  } catch {
+    // Fallback text if logo fails to load offline
+    ctx.fillStyle = '#111C35';
+    ctx.font = 'bold 14px Inter, system-ui, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('BUS', 66, 63);
+    ctx.textAlign = 'left';
+  }
 
   // Header titles
   ctx.fillStyle = '#FFFFFF';

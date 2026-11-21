@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PublicHomePage } from './pages/PublicHomePage';
 import { AuthPage, type AuthMode } from './pages/AuthPage';
 import { StudentDashboard } from './pages/StudentDashboard';
@@ -38,20 +38,93 @@ function getInitialView(): AppView {
       };
     }
   }
+
+  const storedStudent = localStorage.getItem('srmap_buspass_current_student');
+  if (storedStudent) {
+    try {
+      const student = JSON.parse(storedStudent);
+      if (student && student.studentID) {
+        return { page: 'student', student };
+      }
+    } catch {}
+  }
+
+  const storedAdmin = localStorage.getItem('srmap_buspass_current_admin');
+  if (storedAdmin) {
+    try {
+      const admin = JSON.parse(storedAdmin);
+      if (admin && admin.username) {
+        return { page: 'admin', admin };
+      }
+    } catch {}
+  }
+
   return { page: 'home' };
 }
 
 export default function App() {
   const [view, setView] = useState<AppView>(getInitialView);
 
+  useEffect(() => {
+    const handlePopState = () => {
+      const current = getInitialView();
+      if (current.page === 'ticket') {
+        setView(current);
+        return;
+      }
+      const storedStudent = localStorage.getItem('srmap_buspass_current_student');
+      if (storedStudent) {
+        try {
+          setView({ page: 'student', student: JSON.parse(storedStudent) });
+          return;
+        } catch {}
+      }
+      const storedAdmin = localStorage.getItem('srmap_buspass_current_admin');
+      if (storedAdmin) {
+        try {
+          setView({ page: 'admin', admin: JSON.parse(storedAdmin) });
+          return;
+        } catch {}
+      }
+      setView({ page: 'home' });
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleBackFromTicket = () => {
+    const storedStudent = localStorage.getItem('srmap_buspass_current_student');
+    if (storedStudent) {
+      try {
+        const student = JSON.parse(storedStudent);
+        window.history.replaceState({}, '', '/');
+        setView({ page: 'student', student });
+        return;
+      } catch {}
+    }
+    const storedAdmin = localStorage.getItem('srmap_buspass_current_admin');
+    if (storedAdmin) {
+      try {
+        const admin = JSON.parse(storedAdmin);
+        window.history.replaceState({}, '', '/');
+        setView({ page: 'admin', admin });
+        return;
+      } catch {}
+    }
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.history.replaceState({}, '', '/');
+      setView({ page: 'home' });
+    }
+  };
+
   if (view.page === 'ticket') {
     return (
       <DigitalTicketPage
         initialPass={view.pass}
-        onBackPortal={() => {
-          window.history.replaceState({}, '', '/');
-          setView({ page: 'home' });
-        }}
+        onBackPortal={handleBackFromTicket}
       />
     );
   }
@@ -61,6 +134,8 @@ export default function App() {
       <StudentDashboard
         student={view.student}
         onLogout={() => {
+          localStorage.removeItem('srmap_buspass_current_student');
+          window.history.pushState({}, '', '/');
           setView({ page: 'home' });
         }}
       />
@@ -72,6 +147,8 @@ export default function App() {
       <AdminDashboard
         admin={view.admin}
         onLogout={() => {
+          localStorage.removeItem('srmap_buspass_current_admin');
+          window.history.pushState({}, '', '/');
           setView({ page: 'home' });
         }}
       />
@@ -83,12 +160,19 @@ export default function App() {
       <AuthPage
         initialMode={view.mode}
         onBackHome={() => {
+          window.history.pushState({}, '', '/');
           setView({ page: 'home' });
         }}
         onStudentLoginSuccess={(student) => {
+          localStorage.setItem('srmap_buspass_current_student', JSON.stringify(student));
+          localStorage.removeItem('srmap_buspass_current_admin');
+          window.history.pushState({}, '', '/');
           setView({ page: 'student', student });
         }}
         onAdminLoginSuccess={(admin) => {
+          localStorage.setItem('srmap_buspass_current_admin', JSON.stringify(admin));
+          localStorage.removeItem('srmap_buspass_current_student');
+          window.history.pushState({}, '', '/');
           setView({ page: 'admin', admin });
         }}
       />
@@ -98,6 +182,7 @@ export default function App() {
   return (
     <PublicHomePage
       onNavigateAuth={(mode) => {
+        window.history.pushState({}, '', '/');
         setView({ page: 'auth', mode });
       }}
     />

@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
-import { ArrowLeft, Bus, ShieldCheck, UserCheck, UserPlus } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, UserCheck, UserPlus } from 'lucide-react';
 import { cgiApi } from '../api/cgiClient';
+import { AppLogo } from '../components/AppLogo';
 import type { AdminUser, StudentUser } from '../types';
 
 export type AuthMode = 'student-login' | 'student-register' | 'admin-login';
@@ -144,9 +145,7 @@ export function AuthPage({
             onClick={onBackHome}
             className="flex items-center gap-2.5 font-display text-lg font-extrabold text-[#111C35] cursor-pointer"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[#111C35]">
-              <Bus className="h-5 w-5" aria-hidden="true" />
-            </span>
+            <AppLogo className="h-10 w-10" />
             <span>BUSPASS</span>
           </button>
 

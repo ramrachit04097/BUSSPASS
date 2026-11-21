@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, Bus, Download, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, Download, ShieldCheck } from 'lucide-react';
 import { cgiApi } from '../api/cgiClient';
 import type { BusPassRecord } from '../types';
 import { DigitalBusPassCard } from '../components/DigitalBusPassCard';
+import { AppLogo } from '../components/AppLogo';
 import { generateDigitalTicketImage } from '../lib/ticketImageGenerator';
 
 interface DigitalTicketPageProps {
@@ -73,9 +74,7 @@ export function DigitalTicketPage({ initialPass, onBackPortal }: DigitalTicketPa
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 sm:px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EB6B2C] text-white">
-              <Bus className="h-5 w-5" aria-hidden="true" />
-            </span>
+            <AppLogo className="h-10 w-10" />
             <div>
               <p className="font-display text-base font-extrabold tracking-tight text-[#111C35] leading-none">
                 BUSPASS

@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Bus, Download, ExternalLink, Printer, QrCode, X } from 'lucide-react';
+import { Download, ExternalLink, Printer, QrCode, X } from 'lucide-react';
 import type { BusPassRecord } from '../types';
 import { QrCodeSvg } from './QrCodeSvg';
 import { StatusLabel } from './StatusLabel';
+import { AppLogo } from './AppLogo';
 import {
   buildTicketUrl,
   generateDigitalTicketImage,
@@ -90,9 +91,7 @@ export function DigitalBusPassCard({
         {/* Top Navy Header Strip */}
         <div className="flex items-center justify-between bg-[#111C35] px-5 py-4 text-white">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#EB6B2C] text-white shrink-0">
-              <Bus className="h-5 w-5" aria-hidden="true" />
-            </span>
+            <AppLogo className="h-10 w-10" />
             <div>
               <p className="font-display text-sm font-bold tracking-wide whitespace-nowrap">
                 BUSPASS DIGITAL TRANSIT CARD

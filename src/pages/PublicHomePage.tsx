@@ -1,4 +1,5 @@
-import { Bus, Building2, Mail, Phone, Clock, ChevronRight } from 'lucide-react';
+import { Building2, Mail, Phone, Clock, ChevronRight } from 'lucide-react';
+import { AppLogo } from '../components/AppLogo';
 
 interface PublicHomePageProps {
   onNavigateAuth: (mode: 'student-login' | 'student-register') => void;
@@ -16,9 +17,7 @@ export function PublicHomePage({ onNavigateAuth }: PublicHomePageProps) {
             href="#home"
             className="flex items-center gap-2.5 font-display text-lg font-extrabold tracking-tight text-[#111C35] whitespace-nowrap shrink-0"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-slate-200 bg-slate-50 text-[#111C35]">
-              <Bus className="h-5 w-5" aria-hidden="true" />
-            </span>
+            <AppLogo className="h-10 w-10" />
             <span>BUSPASS</span>
           </a>
 
